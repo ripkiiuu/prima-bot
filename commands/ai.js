@@ -14,8 +14,8 @@ const DEFAULT_OPENROUTER_MODELS = [
   'google/gemini-2.5-pro',
   'x-ai/grok-4',
 ];
-const DEFAULT_PROVIDER_ORDER = ['openai', 'gemini', 'openrouter', 'groq'];
-
+const DEFAULT_XAI_MODELS = ['grok-2-latest', 'grok-latest'];
+const DEFAULT_PROVIDER_ORDER = ['xai', 'openai', 'gemini', 'openrouter', 'groq'];
 const HISTORY_LIMIT = 14; // 7 turn (user+assistant)
 const MESSAGE_CHAR_LIMIT = 1200;
 const chatHistories = new Map();
@@ -69,6 +69,7 @@ const OPENAI_MODELS = getModelChain('OPENAI_MODELS', 'OPENAI_MODEL', DEFAULT_OPE
 const GROQ_MODELS = getModelChain('GROQ_MODELS', 'GROQ_MODEL', DEFAULT_GROQ_MODELS);
 const GEMINI_MODELS = getModelChain('GEMINI_MODELS', 'GEMINI_MODEL', DEFAULT_GEMINI_MODELS);
 const OPENROUTER_MODELS = getModelChain('OPENROUTER_MODELS', 'OPENROUTER_MODEL', DEFAULT_OPENROUTER_MODELS);
+const XAI_MODELS = getModelChain('XAI_MODELS', 'XAI_MODEL', DEFAULT_XAI_MODELS);
 const PROVIDER_ORDER = getProviderOrder();
 
 function clampText(text, max = MESSAGE_CHAR_LIMIT) {
@@ -233,6 +234,15 @@ async function callGroq(messages) {
   });
 }
 
+async function callXAI(messages) {
+  return callOpenAICompatible({
+    key: process.env.XAI_API_KEY,
+    baseUrl: 'https://api.x.ai/v1',
+    models: XAI_MODELS,
+    messages,
+  });
+}
+
 async function callOpenAI(messages) {
   return callOpenAICompatible({
     key: process.env.OPENAI_API_KEY,
@@ -311,6 +321,7 @@ async function callGemini(messages) {
 
 async function getAIResponse(messages) {
   const providerMap = {
+    xai: { label: 'xAI (Grok)', fn: callXAI },
     openai: { label: 'OpenAI', fn: callOpenAI },
     gemini: { label: 'Gemini', fn: callGemini },
     openrouter: { label: 'OpenRouter', fn: callOpenRouter },

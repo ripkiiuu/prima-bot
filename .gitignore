@@ -1,0 +1,13 @@
+# Abaikan folder dan file yang mengandung data sensitif
+.env
+node_modules/
+.wwebjs_auth/
+.wwebjs_cache/
+
+# File log
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

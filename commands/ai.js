@@ -4,13 +4,7 @@ const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const DB_PATH = path.join(__dirname, "..", "database_memori.json");
-const DEFAULT_PROVIDER_ORDER = [
-  "gemini",
-  "openrouter",
-  "groq",
-  "openai",
-  "xai",
-];
+const DEFAULT_PROVIDER_ORDER = ["openrouter", "gemini", "groq", "openai", "xai"];
 const VALID_PROVIDERS = new Set([...DEFAULT_PROVIDER_ORDER]);
 const PROVIDER_LABELS = {
   openrouter: "OpenRouter",
@@ -45,17 +39,9 @@ function parseCsv(value) {
     .filter(Boolean);
 }
 
-function uniqueItems(items) {
-  return [...new Set(items.filter(Boolean))];
-}
-
 function getProviderOrder() {
-  const configured = parseCsv(process.env.AI_PROVIDER_ORDER).map((item) =>
-    item.toLowerCase(),
-  );
-  const filtered = configured.filter((provider) =>
-    VALID_PROVIDERS.has(provider),
-  );
+  const configured = parseCsv(process.env.AI_PROVIDER_ORDER).map((item) => item.toLowerCase());
+  const filtered = configured.filter((provider) => VALID_PROVIDERS.has(provider));
   return filtered.length ? filtered : DEFAULT_PROVIDER_ORDER;
 }
 
@@ -73,14 +59,6 @@ function getProviderKeys() {
 }
 
 function getModels(provider) {
-  const defaults = {
-    openrouter: ["openai/gpt-4.1", "google/gemini-2.5-flash"],
-    gemini: ["gemini-2.5-flash", "gemini-flash-latest"],
-    groq: ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
-    openai: ["gpt-4.1", "gpt-4o-mini"],
-    xai: ["grok-beta"],
-  };
-
   const configured = {
     openrouter: parseCsv(process.env.OPENROUTER_MODELS),
     gemini: parseCsv(process.env.GEMINI_MODELS),
@@ -88,6 +66,10 @@ function getModels(provider) {
     openai: parseCsv(process.env.OPENAI_MODELS),
     xai: parseCsv(process.env.XAI_MODELS),
   }[provider];
+
+  if (configured && configured.length) {
+    return configured;
+  }
 
   const legacy = {
     openrouter: String(process.env.OPENROUTER_MODEL || "").trim(),
@@ -97,11 +79,19 @@ function getModels(provider) {
     xai: String(process.env.XAI_MODEL || "").trim(),
   }[provider];
 
-  return uniqueItems([
-    ...(configured || []),
-    legacy,
-    ...(defaults[provider] || []),
-  ]);
+  if (legacy) {
+    return [legacy];
+  }
+
+  const defaults = {
+    openrouter: ["openai/gpt-4.1"],
+    gemini: ["gemini-1.5-flash"],
+    groq: ["llama-3.3-70b-versatile"],
+    openai: ["gpt-4.1"],
+    xai: ["grok-beta"],
+  };
+
+  return defaults[provider] || [];
 }
 
 function buildChatMessages(systemPrompt, history, rawPrompt) {
@@ -141,9 +131,7 @@ function normalizeContent(content) {
 }
 
 function shortText(value, max = 110) {
-  const text = String(value || "")
-    .replace(/\s+/g, " ")
-    .trim();
+  const text = String(value || "").replace(/\s+/g, " ").trim();
   if (!text) return "tanpa detail";
   return text.length > max ? `${text.slice(0, max - 3)}...` : text;
 }
@@ -151,66 +139,34 @@ function shortText(value, max = 110) {
 function classifyError(error) {
   const status = error.response?.status;
   const data = error.response?.data;
-  const detail =
-    typeof data === "string"
-      ? data
-      : data?.error?.message || data?.error || data?.message || error.message;
+  const detail = typeof data === "string"
+    ? data
+    : data?.error?.message || data?.error || data?.message || error.message;
 
   if (status === 401 || status === 403) {
-    return {
-      kind: "auth",
-      summary: "API key tidak valid / tidak diizinkan",
-      detail: shortText(detail),
-    };
+    return { kind: "auth", summary: "API key tidak valid / tidak diizinkan", detail: shortText(detail) };
   }
 
   if (status === 429) {
-    return {
-      kind: "rate_limit",
-      summary: "limit request/token habis",
-      detail: shortText(detail),
-    };
+    return { kind: "rate_limit", summary: "limit request/token habis", detail: shortText(detail) };
   }
 
   if (status === 404) {
-    return {
-      kind: "not_found",
-      summary: "model/endpoint tidak ditemukan",
-      detail: shortText(detail),
-    };
+    return { kind: "not_found", summary: "model/endpoint tidak ditemukan", detail: shortText(detail) };
   }
 
   if (status >= 400 && status < 500) {
-    return {
-      kind: "bad_request",
-      summary: `request ditolak (${status})`,
-      detail: shortText(detail),
-    };
+    return { kind: "bad_request", summary: `request ditolak (${status})`, detail: shortText(detail) };
   }
 
   if (error.code === "ECONNABORTED") {
-    return {
-      kind: "timeout",
-      summary: "request timeout",
-      detail: "provider tidak merespons tepat waktu",
-    };
+    return { kind: "timeout", summary: "request timeout", detail: "provider tidak merespons tepat waktu" };
   }
 
-  return {
-    kind: "error",
-    summary: shortText(detail),
-    detail: shortText(detail),
-  };
+  return { kind: "error", summary: shortText(detail), detail: shortText(detail) };
 }
 
-async function callChatCompletions({
-  axiosInstance,
-  endpoint,
-  apiKey,
-  model,
-  messages,
-  extraHeaders = {},
-}) {
+async function callChatCompletions({ axiosInstance, endpoint, apiKey, model, messages, extraHeaders = {} }) {
   const response = await axiosInstance.post(
     endpoint,
     {
@@ -241,7 +197,6 @@ async function callGemini({ apiKey, model, systemPrompt, history, rawPrompt }) {
   const generativeModel = genAI.getGenerativeModel({
     model,
     systemInstruction: systemPrompt,
-    tools: [{ googleSearch: {} }],
   });
 
   const chat = generativeModel.startChat({
@@ -261,15 +216,7 @@ async function callGemini({ apiKey, model, systemPrompt, history, rawPrompt }) {
   return text;
 }
 
-async function tryProvider({
-  provider,
-  apiKey,
-  models,
-  axiosInstance,
-  systemPrompt,
-  history,
-  rawPrompt,
-}) {
+async function tryProvider({ provider, apiKey, models, axiosInstance, systemPrompt, history, rawPrompt }) {
   if (!apiKey) {
     return { ok: false, reason: "API key belum diatur" };
   }
@@ -281,13 +228,7 @@ async function tryProvider({
       let text = "";
 
       if (provider === "gemini") {
-        text = await callGemini({
-          apiKey,
-          model,
-          systemPrompt,
-          history,
-          rawPrompt,
-        });
+        text = await callGemini({ apiKey, model, systemPrompt, history, rawPrompt });
       } else if (provider === "openai") {
         text = await callChatCompletions({
           axiosInstance,
@@ -382,10 +323,12 @@ module.exports = {
 
       let systemPrompt = `Identitas Mutlak: Namamu adalah "Cell". Kamu asisten setia Sastra Coding. Fakta Waktu Dunia Saat Ini: ${currentTimeStr} WIB.
 ${KALENDER_ABSOLUT}
-ATURAN SIFAT (EMPATHY & TONE):
+ATURAN SIFAT & FORMATTING:
 1. Penuh Empati, tiru gaya bahasa user (lo-gue/aku-kamu).
-2. MULTI-BAHASA SEMPURNA (Inggris, Korea, Spanyol, Arab, Jepang, dsb) layaknya native speaker.
-3. Paragraf pendek natural untuk WhatsApp. Dilarang pakai karakter asterisk bold (*)`;
+2. MULTI-BAHASA SEMPURNA layaknya native speaker.
+3. FORMATTING WAJIB: DILARANG KERAS menggunakan karakter asterisk/bintang (*) untuk bold maupun list!
+4. Gunakan angka (1, 2, 3) atau strip (-) untuk membuat daftar/list agar terlihat rapi dan terstruktur.
+5. Paragraf pendek natural untuk WhatsApp.`;
 
       const adminIds = parseCsv(process.env.ADMINS);
       if (adminIds.includes(userId)) {
@@ -448,9 +391,11 @@ ATURAN SIFAT (EMPATHY & TONE):
       }
 
       saveMemory(db);
-      console.log(
-        `[AI] Provider aktif: ${PROVIDER_LABELS[usedProvider]} (${usedModel})`,
-      );
+      console.log(`[AI] Provider aktif: ${PROVIDER_LABELS[usedProvider]} (${usedModel})`);
+      
+      // Hapus paksa semua karakter asterisk dari output akhir untuk memastikan kerapian
+      aiReply = aiReply.replace(/\*/g, '');
+      
       await msg.reply(aiReply.trim());
     } catch (err) {
       const detail = shortText(err.message, 220);

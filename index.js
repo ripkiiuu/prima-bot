@@ -16,6 +16,7 @@ const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
+const scheduler = require('./scheduler');
 
 // ─── Warna log di terminal (pakai chalk v4 agar compatible CommonJS) ───
 let chalk;
@@ -93,6 +94,9 @@ client.on('ready', () => {
   }
   log('🚀 Bot siap digunakan! Menunggu pesan masuk...');
   log(`Prefix aktif: "${config.PREFIX}" | Admin: ${config.ADMINS.join(', ') || 'Belum diset'}`);
+  
+  // Initialize scheduler for reminders
+  scheduler.init(client);
 });
 
 // ─── Event: Ada pesan masuk ───────────────────────────────────────────────

@@ -63,35 +63,35 @@
     "riwayat": [
       {
         "role": "user",
-        "content": "cape ya cel"
-      },
-      {
-        "role": "assistant",
-        "content": "Haha Bos! Cell tahu kamu cape juga! Saya tahu kamu sudah cape dan butuh istirahat. Ini juga hari Kamis, kamu harus siap buat kerja keras lagi besok, Bos!\n\nTapi jangan khawatir, Bos Besar! Cell ada di sini untuk membantu Tuan Rifqy. Jika Tuan cape, Cell bisa menawarkan beberapa ide sederhana untuk membantu Tuan mencari inspirasi.\n\nMungkin kamu ingin mencoba beberapa cara untuk menghilangkan kecapean, seperti:\n\n- Mengambil napas dalam-dalam\n- Berjalan ke luar ruangan\n- Mendengarkan musik yang menyenangkan\n- Mencoba minuman hangat\n\nAtau, jika Tuan ingin langsung membicarakan tentang lomba esai, Cell juga siap membantu!"
-      },
-      {
-        "role": "user",
-        "content": "coba pake bahasa korea"
-      },
-      {
-        "role": "assistant",
-        "content": ", ! , . , . \n\n, ? , . , . \n\n, , , . , , . \n\n, , ! , ."
-      },
-      {
-        "role": "user",
         "content": "hi cel"
       },
       {
         "role": "assistant",
-        "content": "Hai Bos! Kamis, 19 Maret 2026 pukul 19.04 WIB nih. Ada yang bisa Cell bantu, Bos? Gimana kabarmu?"
+        "content": "Halo juga, Bos! Gimana nih? Ada yang bisa Cell bantu? 😊"
       },
       {
         "role": "user",
-        "content": "coba pake bhs korea"
+        "content": "jelasin apa itu rekayasa perangkat lunak dalam bahasa bayi"
       },
       {
         "role": "assistant",
-        "content": "안녕 보스! 지금은 2026년 3월 19일 목요일 오후 9시 4분(KST)이야. 뭔가 도와드릴 일이라도 있을까, 보스? 잘 지내셨어? 😊"
+        "content": "Siap, Bos! Rekayasa perangkat lunak itu... hmm... gini loh, kayak kita mau bikin mainan, tapi mainannya ini di dalam komputer atau hape,"
+      },
+      {
+        "role": "user",
+        "content": "lanjutin"
+      },
+      {
+        "role": "assistant",
+        "content": "Oke, siap, Bos! Lanjut ya...\n\nJadi, rekayasa perangkat lunak itu kayak...\n\n1.  Pertama, kita mikir-mikir dulu, \"Mau bikin mainan apa ya?\" Mainan yang bisa ngomong? Atau mainan yang bisa jalan-jalan?\n2.  Terus, kita gambar-gambar dulu di kertas, \"Oh, nanti mainannya begini bentuknya, begini jalannya.\"\n3.  Abis itu, kita mulai deh susun-susun balok-balok kecil (itu namanya kode!) biar mainannya jadi. Satu-satu, pelan-pelan.\n4.  Nah, kalo udah jadi, kita coba-coba, \"Eh, mainannya udah bisa jalan belum ya? Udah bisa ngomong belum?\" Kalo ada yang salah, dibenerin lagi.\n5.  Nanti kalo udah bagus, baru deh mainannya bisa dipakai sama semua temen-temen. Hehehe.\n\nGitu, Bos! Kayak bikin mainan gede tapi di komputer! Lucu kan?"
+      },
+      {
+        "role": "user",
+        "content": "kalo pake bhs inggris?"
+      },
+      {
+        "role": "assistant",
+        "content": "Siap, Bos! Oke, pake bahasa Inggris ya... Hmm... gini loh...\n\nSoftware engineering is like...\n\n1.  First, we think, \"What toy do we wanna make?\" A toy that can talk? Or a toy that can walk?\n2.  Then, we draw pictures on paper, \"Oh, the toy will look like this, and move like this!\"\n3.  After that, we start putting little blocks together (they're called code!), one by one, slowly, to make the toy.\n4.  When it's done, we try it, \"Hmm, can the toy walk already? Can it talk already?\" If something is wrong, we fix it!\n5.  Then, when it's super good, all our friends can play with the toy! Yay!\n\nIt's like making a big toy, but inside the computer or phone, Tuan! Hehehe."
       }
     ]
   },
@@ -255,6 +255,22 @@
       {
         "role": "assistant",
         "content": "Halo! Ini Cell. Kamis, 19 Maret 2026 pukul 19.05 WIB.\n\nCincai banget dong! 😉 Ada yang bisa Cell bantu? Santai aja, loh."
+      },
+      {
+        "role": "user",
+        "content": "arti"
+      },
+      {
+        "role": "assistant",
+        "content": "Oke, \"arti\" itu dalam bahasa Indonesia artinya *meaning* atau makna.\n\nJadi, kalau lo nanya \"arti cincai\", berarti lo nanya \"makna cincai\" gitu. Paham kan? 😊"
+      },
+      {
+        "role": "user",
+        "content": "gak"
+      },
+      {
+        "role": "assistant",
+        "content": "Oke, maaf kalau kurang jelas! 🙏\n\nGini, kalau lo nanya \"arti\", itu sama aja kayak lo nanya \"maksudnya apa?\" atau \"definisi dari suatu kata itu apa?\".\n\nContohnya:\n*   Lo nanya: \"Arti 'cincai' apa?\"\n*   Berarti lo pengen tau: \"Maksudnya kata 'cincai' itu apa?\"\n\nGimana? Udah lebih jelas sekarang? Atau ada bagian lain yang bikin bingung? Jangan sungkan ya, gue di sini buat bantu! 😊"
       }
     ]
   }

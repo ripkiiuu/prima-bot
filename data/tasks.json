@@ -1,0 +1,26 @@
+{
+  "120363406659449492@g.us": [
+    {
+      "id": 1,
+      "desc": "ngaji",
+      "done": false
+    }
+  ],
+  "120363418737588907@g.us": [
+    {
+      "id": 1,
+      "desc": "REDAKSI RAPAT EVALUASI RABU",
+      "done": false
+    },
+    {
+      "id": 2,
+      "desc": "TUGAS PEMPAR DEADLINE 31 MARET",
+      "done": false
+    },
+    {
+      "id": 3,
+      "desc": "TUGAS RPL DEADLINE GATAU",
+      "done": false
+    }
+  ]
+}

@@ -85,7 +85,7 @@ function getModels(provider) {
 
   const defaults = {
     openrouter: ["openai/gpt-4.1"],
-    gemini: ["gemini-2.5-flash"],
+    gemini: ["gemini-2.0-flash"],
     groq: ["llama-3.3-70b-versatile"],
     openai: ["gpt-4.1"],
     xai: ["grok-beta"],
@@ -137,29 +137,31 @@ function shortText(value, max = 110) {
 }
 
 function classifyError(error) {
-  const status = error.response?.status;
+  const status = error.response?.status || error.status;
   const data = error.response?.data;
   const detail = typeof data === "string"
     ? data
-    : data?.error?.message || data?.error || data?.message || error.message;
+    : data?.error?.message || data?.error || data?.message || error.message || "Unknown error";
 
-  if (status === 401 || status === 403) {
+  const detailStr = String(detail).toLowerCase();
+
+  if (status === 401 || status === 403 || detailStr.includes("api key not valid") || detailStr.includes("403")) {
     return { kind: "auth", summary: "API key tidak valid / tidak diizinkan", detail: shortText(detail) };
   }
 
-  if (status === 429) {
+  if (status === 429 || detailStr.includes("429") || detailStr.includes("quota") || detailStr.includes("rate limit")) {
     return { kind: "rate_limit", summary: "limit request/token habis", detail: shortText(detail) };
   }
 
-  if (status === 404) {
+  if (status === 404 || detailStr.includes("404") || detailStr.includes("not found")) {
     return { kind: "not_found", summary: "model/endpoint tidak ditemukan", detail: shortText(detail) };
   }
 
-  if (status >= 400 && status < 500) {
-    return { kind: "bad_request", summary: `request ditolak (${status})`, detail: shortText(detail) };
+  if ((status && status >= 400 && status < 500) || detailStr.includes("bad request") || detailStr.includes("invalid argument")) {
+    return { kind: "bad_request", summary: `request ditolak (${status || '?'})`, detail: shortText(detail) };
   }
 
-  if (error.code === "ECONNABORTED") {
+  if (error.code === "ECONNABORTED" || detailStr.includes("timeout")) {
     return { kind: "timeout", summary: "request timeout", detail: "provider tidak merespons tepat waktu" };
   }
 

@@ -85,7 +85,7 @@ function getModels(provider) {
 
   const defaults = {
     openrouter: ["openai/gpt-4.1"],
-    gemini: ["gemini-1.5-flash"],
+    gemini: ["gemini-2.5-flash"],
     groq: ["llama-3.3-70b-versatile"],
     openai: ["gpt-4.1"],
     xai: ["grok-beta"],
